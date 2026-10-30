@@ -1,0 +1,11 @@
+.DS_Store
+dist/
+node_modules/
+*.zip
+# connection links and logins never go to git
+*.cred
+links.txt
+# internal: project context and store-console notes stay local
+CLAUDE.md
+store/STORE.md
+store/raw/

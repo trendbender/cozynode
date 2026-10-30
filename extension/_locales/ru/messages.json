@@ -1,0 +1,75 @@
+{
+  "extName": {
+    "message": "CozyNode: свой VPS как приватный прокси"
+  },
+  "extDescription": {
+    "message": "Пустите Chrome через свой сервер. Вставьте одну ссылку из установщика CozyNode и включите кнопкой."
+  },
+  "setupTitle": {
+    "message": "Подключите свой сервер"
+  },
+  "setupHint": {
+    "message": "Вставьте ссылку cozy://, которую напечатал установщик на сервере."
+  },
+  "connect": {
+    "message": "Подключить"
+  },
+  "noServer": {
+    "message": "Сервера ещё нет? Выполните на любом Linux VPS (Ubuntu/Debian):"
+  },
+  "stateOn": {
+    "message": "Прокси включён"
+  },
+  "stateOff": {
+    "message": "Прокси выключен"
+  },
+  "modeAll": {
+    "message": "Все сайты"
+  },
+  "modeSites": {
+    "message": "Только выбранные"
+  },
+  "addCurrent": {
+    "message": "Добавить $site$",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "remove": {
+    "message": "Убрать"
+  },
+  "check": {
+    "message": "Проверить"
+  },
+  "checking": {
+    "message": "Проверяю…"
+  },
+  "whereAmI": {
+    "message": "Сайты видят вас как $ip$ ($loc$)",
+    "placeholders": {
+      "ip": {
+        "content": "$1"
+      },
+      "loc": {
+        "content": "$2"
+      }
+    }
+  },
+  "errNetwork": {
+    "message": "Нет связи через сервер. Он запущен, порт открыт?"
+  },
+  "errLink": {
+    "message": "Это не похоже на ссылку cozy://."
+  },
+  "errAuth": {
+    "message": "Сервер не принял логин. Вставьте свежую ссылку."
+  },
+  "forget": {
+    "message": "Удалить сервер"
+  },
+  "forgetConfirm": {
+    "message": "Удалить этот сервер из расширения?"
+  }
+}

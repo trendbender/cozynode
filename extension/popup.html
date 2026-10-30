@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <img src="icons/icon32.png" alt="" width="20" height="20">
+    <span class="brand">CozyNode</span>
+  </header>
+
+  <section id="setup" hidden>
+    <h1 data-i18n="setupTitle"></h1>
+    <p class="muted" data-i18n="setupHint"></p>
+    <textarea id="link" rows="3" spellcheck="false" placeholder="cozy://user:password@1.2.3.4:8443#my-server"></textarea>
+    <p id="setupError" class="error" hidden></p>
+    <button id="connect" class="primary" data-i18n="connect"></button>
+    <p class="muted small" data-i18n="noServer"></p>
+    <pre class="cmd">curl -fsSL https://raw.githubusercontent.com/trendbender/cozynode/main/server/install.sh | sudo bash</pre>
+  </section>
+
+  <section id="main" hidden>
+    <button id="toggle" class="toggle" aria-pressed="false">
+      <span class="dot"></span>
+      <span id="toggleLabel"></span>
+    </button>
+    <div class="server">
+      <span id="serverName"></span>
+      <span id="serverHost" class="muted small"></span>
+    </div>
+    <div id="where" class="where muted small"></div>
+    <p id="mainError" class="error" hidden></p>
+
+    <div class="modes" role="radiogroup">
+      <label><input type="radio" name="mode" value="all"> <span data-i18n="modeAll"></span></label>
+      <label><input type="radio" name="mode" value="sites"> <span data-i18n="modeSites"></span></label>
+    </div>
+
+    <div id="sitesBox" hidden>
+      <button id="addCurrent" class="secondary"></button>
+      <ul id="sites"></ul>
+      <form id="addForm">
+        <input id="siteInput" type="text" spellcheck="false" placeholder="example.com">
+        <button type="submit" class="secondary">+</button>
+      </form>
+    </div>
+
+    <footer>
+      <button id="check" class="link" data-i18n="check"></button>
+      <button id="forget" class="link danger" data-i18n="forget"></button>
+    </footer>
+  </section>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

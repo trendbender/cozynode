@@ -1,0 +1,75 @@
+{
+  "extName": {
+    "message": "CozyNode: your own VPS as a private proxy"
+  },
+  "extDescription": {
+    "message": "Route Chrome through your own server. Paste one link from the CozyNode server script and switch it on."
+  },
+  "setupTitle": {
+    "message": "Connect your server"
+  },
+  "setupHint": {
+    "message": "Paste the cozy:// link printed by the server installer."
+  },
+  "connect": {
+    "message": "Connect"
+  },
+  "noServer": {
+    "message": "No server yet? Run this on any Linux VPS (Ubuntu/Debian):"
+  },
+  "stateOn": {
+    "message": "Proxy is on"
+  },
+  "stateOff": {
+    "message": "Proxy is off"
+  },
+  "modeAll": {
+    "message": "All sites"
+  },
+  "modeSites": {
+    "message": "Only selected sites"
+  },
+  "addCurrent": {
+    "message": "Add $site$",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
+  "remove": {
+    "message": "Remove"
+  },
+  "check": {
+    "message": "Check connection"
+  },
+  "checking": {
+    "message": "Checking…"
+  },
+  "whereAmI": {
+    "message": "You appear as $ip$ ($loc$)",
+    "placeholders": {
+      "ip": {
+        "content": "$1"
+      },
+      "loc": {
+        "content": "$2"
+      }
+    }
+  },
+  "errNetwork": {
+    "message": "No connection through the server. Is it running and is the port open?"
+  },
+  "errLink": {
+    "message": "This does not look like a cozy:// link."
+  },
+  "errAuth": {
+    "message": "The server rejected the login. Paste a fresh link."
+  },
+  "forget": {
+    "message": "Remove server"
+  },
+  "forgetConfirm": {
+    "message": "Remove this server from the extension?"
+  }
+}
