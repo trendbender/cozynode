@@ -4,6 +4,9 @@
 #
 #   curl -fsSL https://raw.githubusercontent.com/trendbender/cozynode/main/server/install.sh | sudo bash
 #
+# After install the script is kept as /opt/cozynode/install.sh with a short alias:
+#   sudo cozynode link | add-user | ios-profile [N] | status | install | uninstall
+#
 # Commands:
 #   install.sh [install] [--port N] [--host IP|DOMAIN] [--acme-http-port N] [--name LABEL]
 #              [--self-ports 80,443]   public ports of THIS server reachable via the proxy
@@ -25,6 +28,8 @@ declare -A SB_SHA256=(
 )
 
 PREFIX=/opt/cozynode
+SELF_URL="https://raw.githubusercontent.com/trendbender/cozynode/main/server/install.sh"
+CLI=/usr/local/bin/cozynode
 CONF_DIR=/etc/cozynode
 DATA_DIR=/var/lib/cozynode
 CONFIG="$CONF_DIR/config.json"
@@ -74,6 +79,26 @@ download_singbox() {
   install -d -m 755 "$PREFIX"
   install -m 755 "$tmp/sing-box-${SB_VERSION}-linux-${a}/sing-box" "$PREFIX/sing-box"
   rm -rf "$tmp"
+}
+
+# keep a copy of this script for later commands: under `curl | bash` there is no
+# file to copy, so fetch it again from the same URL
+save_self() {
+  local src="${BASH_SOURCE[0]:-}" tmp
+  install -d -m 755 "$PREFIX"
+  if [ -f "$src" ]; then
+    [ "$src" -ef "$PREFIX/install.sh" ] || install -m 755 "$src" "$PREFIX/install.sh"
+  else
+    tmp=$(mktemp)
+    if curl -fsSL -m 30 -o "$tmp" "$SELF_URL" && bash -n "$tmp"; then
+      install -m 755 "$tmp" "$PREFIX/install.sh"
+    else
+      warn "could not save the installer copy; later commands: curl -fsSL $SELF_URL | sudo bash -s link"
+      rm -f "$tmp"; return 0
+    fi
+    rm -f "$tmp"
+  fi
+  ln -sfn "$PREFIX/install.sh" "$CLI"
 }
 
 # users.json holds [{"username":..,"password":..}]; config is regenerated from it
@@ -314,7 +339,9 @@ EOF
   sleep 1
   systemctl is-active -q cozynode || { journalctl -u cozynode -n 30 --no-pager; die "service failed to start"; }
   wait_cert && self_test || true
+  save_self
   print_link 0
+  if [ -x "$CLI" ]; then echo "  Later: sudo cozynode link | add-user | ios-profile | status | uninstall"; fi
 }
 
 cmd_add_user() {
@@ -342,7 +369,7 @@ cmd_status() {
 cmd_uninstall() {
   need_root
   systemctl disable --now cozynode 2>/dev/null || true
-  rm -f "$UNIT"; systemctl daemon-reload
+  rm -f "$UNIT" "$CLI"; systemctl daemon-reload
   if [ -f "$META" ] && command -v ufw >/dev/null; then
     # shellcheck disable=SC1090
     . "$META"; ufw delete allow "${PORT}/tcp" >/dev/null 2>&1 || true

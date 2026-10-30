@@ -25,7 +25,7 @@ The script downloads a pinned [sing-box](https://github.com/SagerNet/sing-box) r
 cozy://cozyXXXXXX:************************@203.0.113.7:443#my-vps
 ```
 
-Other commands: `install.sh link` (show the link again), `add-user` (a second login for a friend or device), `ios-profile` (sing-box app profile, see below), `status`, `uninstall`.
+The installer keeps a copy of itself, so later commands are short: `sudo cozynode link` (show the link again), `add-user` (a second login for a friend or device), `ios-profile` (sing-box app profile, see below), `status`, `install` (update sing-box and config, logins stay), `uninstall`.
 
 Options: `--port N` (default 443, or 8443 if 443 is busy), `--host IP|domain`, `--name label`.
 
@@ -66,8 +66,8 @@ Install CozyNode from the Chrome Web Store (or `chrome://extensions` → Develop
 The extension covers Chrome only. For the whole device, use the free [sing-box app](https://sing-box.sagernet.org/clients/) (iOS, macOS, Android) with the same server, no server changes:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/trendbender/cozynode/main/server/install.sh | sudo bash -s ios-profile > cozynode.json
-# login #0; add " 1" after ios-profile for the second login
+sudo cozynode ios-profile > cozynode.json
+# login #0; `sudo cozynode ios-profile 1` for the second login
 ```
 
 Send `cozynode.json` to the phone (AirDrop or Files), import it in the sing-box app (Profiles → New → Import) and press Start. Check: https://www.cloudflare.com/cdn-cgi/trace shows the server IP and country. TCP and DNS go through the proxy; other UDP (QUIC) is refused, apps fall back to TCP. The profile contains the login, keep it private.
