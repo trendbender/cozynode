@@ -253,7 +253,7 @@ print(json.dumps({
 PY
   {
     echo "  sing-box profile for '${NAME}' (login #${1:-0}). Save it as a .json file, send it to the"
-    echo "  device (AirDrop, Files), import it in the sing-box app (Profiles > New > Import) and press Start."
+    echo "  device (AirDrop, Files), import it in the sing-box app (+ > Import from File) and press Start."
     echo "  Keep it secret: it contains the login."
   } >&2
 }
