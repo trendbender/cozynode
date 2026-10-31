@@ -70,6 +70,17 @@
     "message": "Удалить сервер"
   },
   "forgetConfirm": {
-    "message": "Удалить этот сервер из расширения?"
+    "message": "Удалить сервер $name$ из расширения?",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "addServer": {
+    "message": "+ Добавить сервер"
+  },
+  "cancel": {
+    "message": "Отмена"
   }
 }

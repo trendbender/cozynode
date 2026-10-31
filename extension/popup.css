@@ -91,7 +91,27 @@ button { font: inherit; cursor: pointer; }
 .toggle .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--off); }
 .toggle[aria-pressed=true] { background: var(--accent-soft); border-color: var(--accent); }
 .toggle[aria-pressed=true] .dot { background: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent); }
-.server { display: flex; justify-content: space-between; gap: 8px; margin: 10px 2px 2px; }
+.servers { list-style: none; margin: 10px 0 2px; padding: 0; max-height: 170px; overflow: auto; }
+.servers button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: none;
+  color: var(--fg);
+  text-align: left;
+}
+.servers button:hover { background: var(--line); }
+.servers button[aria-checked=true] { border-color: var(--line); background: color-mix(in srgb, var(--line) 50%, transparent); }
+.servers .radio { flex: none; width: 10px; height: 10px; border: 2px solid var(--off); border-radius: 50%; }
+.servers button[aria-checked=true] .radio { border-color: var(--accent); background: var(--accent); }
+.servers .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#addServer { margin: 2px 8px 6px; }
+#cancelAdd { display: block; margin: -4px auto 10px; }
+#cancelAdd[hidden] { display: none; }
 .where { margin: 0 2px 8px; min-height: 18px; }
 .modes { display: flex; gap: 14px; margin: 6px 2px 8px; }
 .modes label { display: flex; align-items: center; gap: 4px; }

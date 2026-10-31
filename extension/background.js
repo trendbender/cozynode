@@ -63,7 +63,7 @@ async function paint() {
 
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area !== "local") return;
-  if (changes.enabled || changes.server || changes.mode || changes.sites) apply();
+  if (changes.enabled || changes.servers || changes.activeId || changes.mode || changes.sites) apply();
   else if (changes.lastError) paint();
 });
 

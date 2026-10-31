@@ -70,6 +70,17 @@
     "message": "Remove server"
   },
   "forgetConfirm": {
-    "message": "Remove this server from the extension?"
+    "message": "Remove server $name$ from the extension?",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "addServer": {
+    "message": "+ Add server"
+  },
+  "cancel": {
+    "message": "Cancel"
   }
 }

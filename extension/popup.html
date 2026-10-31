@@ -16,6 +16,7 @@
     <textarea id="link" rows="3" spellcheck="false" placeholder="cozy://user:password@1.2.3.4:8443#my-server"></textarea>
     <p id="setupError" class="error" hidden></p>
     <button id="connect" class="primary" data-i18n="connect"></button>
+    <button id="cancelAdd" class="link" data-i18n="cancel" hidden></button>
     <p class="muted small" data-i18n="noServer"></p>
     <pre class="cmd">curl -fsSL https://raw.githubusercontent.com/trendbender/cozynode/main/server/install.sh | sudo bash</pre>
   </section>
@@ -25,10 +26,8 @@
       <span class="dot"></span>
       <span id="toggleLabel"></span>
     </button>
-    <div class="server">
-      <span id="serverName"></span>
-      <span id="serverHost" class="muted small"></span>
-    </div>
+    <ul id="servers" class="servers" role="radiogroup"></ul>
+    <button id="addServer" class="link small" data-i18n="addServer"></button>
     <div id="where" class="where muted small"></div>
     <p id="mainError" class="error" hidden></p>
 

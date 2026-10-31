@@ -5,7 +5,9 @@ export const CHECK_URL = "https://www.cloudflare.com/cdn-cgi/trace";
 export const CHECK_HOST = "www.cloudflare.com";
 
 export const DEFAULTS = {
-  server: null, // {host, port, username, password, name}
+  servers: [], // [{id, host, port, username, password, name}]
+  activeId: "",
+  server: null, // 0.1.x single server, migrated into servers on read
   enabled: false,
   mode: "all", // "all" | "sites"
   sites: [],
@@ -73,7 +75,32 @@ function FindProxyForURL(url, host) {
   };
 }
 
+export const serverId = (s) => `${s.username}@${s.host}:${s.port}`;
+
+// state.server is the active entry of state.servers (null when there is none)
 export async function getState() {
-  const s = await chrome.storage.local.get(DEFAULTS);
-  return { ...DEFAULTS, ...s };
+  const s = { ...DEFAULTS, ...(await chrome.storage.local.get(DEFAULTS)) };
+  if (s.server && !s.servers.length) {
+    const migrated = { ...s.server, id: serverId(s.server) };
+    s.servers = [migrated];
+    s.activeId = migrated.id;
+    await chrome.storage.local.set({ servers: s.servers, activeId: s.activeId, server: null });
+  }
+  s.server = s.servers.find((v) => v.id === s.activeId) || s.servers[0] || null;
+  return s;
+}
+
+// Adds a server or refreshes the same login on the same host, and makes it active.
+export async function addServer(server) {
+  const { servers } = await getState();
+  const entry = { ...server, id: serverId(server) };
+  const rest = servers.filter((v) => v.id !== entry.id);
+  await chrome.storage.local.set({ servers: [...rest, entry], activeId: entry.id, enabled: true, lastError: "" });
+}
+
+export async function removeServer(id) {
+  const { servers, activeId, enabled } = await getState();
+  const rest = servers.filter((v) => v.id !== id);
+  const next = id === activeId ? rest[0]?.id || "" : activeId;
+  await chrome.storage.local.set({ servers: rest, activeId: next, enabled: enabled && rest.length > 0, lastError: "" });
 }

@@ -1,4 +1,4 @@
-import { CHECK_URL, getState, normalizeSite, parseLink } from "./lib.js";
+import { CHECK_URL, addServer, getState, normalizeSite, parseLink, removeServer } from "./lib.js";
 
 const $ = (id) => document.getElementById(id);
 const t = (key, sub) => chrome.i18n.getMessage(key, sub) || key;
@@ -6,18 +6,39 @@ const t = (key, sub) => chrome.i18n.getMessage(key, sub) || key;
 document.querySelectorAll("[data-i18n]").forEach((el) => (el.textContent = t(el.dataset.i18n)));
 
 let currentSite = "";
+let adding = false; // setup screen opened from "Add server" while servers exist
 
 async function render() {
   const state = await getState();
-  $("setup").hidden = !!state.server;
-  $("main").hidden = !state.server;
-  if (!state.server) return;
+  const setup = adding || !state.server;
+  $("setup").hidden = !setup;
+  $("main").hidden = setup;
+  $("cancelAdd").hidden = !state.server;
+  if (setup) return;
 
   const on = state.enabled;
   $("toggle").setAttribute("aria-pressed", String(on));
   $("toggleLabel").textContent = on ? t("stateOn") : t("stateOff");
-  $("serverName").textContent = state.server.name;
-  $("serverHost").textContent = `${state.server.host}:${state.server.port}`;
+  const list = $("servers");
+  list.replaceChildren();
+  for (const s of state.servers) {
+    const b = document.createElement("button");
+    b.setAttribute("role", "radio");
+    b.setAttribute("aria-checked", String(s.id === state.server.id));
+    const radio = document.createElement("span");
+    radio.className = "radio";
+    const name = document.createElement("span");
+    name.className = "name";
+    name.textContent = s.name;
+    const host = document.createElement("span");
+    host.className = "muted small";
+    host.textContent = `${s.host}:${s.port}`;
+    b.append(radio, name, host);
+    b.onclick = () => selectServer(s.id);
+    const li = document.createElement("li");
+    li.append(b);
+    list.append(li);
+  }
   $("mainError").hidden = !state.lastError;
   $("mainError").textContent = state.lastError;
   document.querySelectorAll("input[name=mode]").forEach((r) => (r.checked = r.value === state.mode));
@@ -69,10 +90,34 @@ $("connect").onclick = async () => {
     $("setupError").textContent = t("errLink");
     return;
   }
-  await chrome.storage.local.set({ server, enabled: true, lastError: "" });
+  await addServer(server);
+  adding = false;
+  $("link").value = "";
+  $("setupError").hidden = true;
   await render();
   setTimeout(check, 400);
 };
+
+$("addServer").onclick = () => {
+  adding = true;
+  render();
+  $("link").focus();
+};
+
+$("cancelAdd").onclick = () => {
+  adding = false;
+  $("setupError").hidden = true;
+  render();
+};
+
+async function selectServer(id) {
+  const { activeId, enabled } = await getState();
+  if (id === activeId && enabled) return;
+  $("where").textContent = "";
+  await chrome.storage.local.set({ activeId: id, enabled: true, lastError: "" });
+  await render();
+  setTimeout(check, 400);
+}
 
 $("toggle").onclick = async () => {
   const { enabled } = await getState();
@@ -105,8 +150,10 @@ $("addForm").onsubmit = async (e) => {
 $("check").onclick = check;
 
 $("forget").onclick = async () => {
-  if (!confirm(t("forgetConfirm"))) return;
-  await chrome.storage.local.set({ server: null, enabled: false, lastError: "" });
+  const { server } = await getState();
+  if (!server || !confirm(t("forgetConfirm", server.name))) return;
+  await removeServer(server.id);
+  $("where").textContent = "";
   render();
 };
 
