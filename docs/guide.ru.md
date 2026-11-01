@@ -6,6 +6,8 @@ CozyNode превращает арендованный Linux VPS в приват
 
 [![Демо CozyNode: вставить ссылку, выбрать сайты, добавить серверы, переключиться](media/demo.gif)](media/demo.mp4)
 
+Видео с озвучкой (на английском), 55 секунд: [смотреть на YouTube](https://youtu.be/OrKzaXMDErI).
+
 Все адреса и логины на этой странице — примеры.
 
 - [1. Что понадобится](#1-что-понадобится)
@@ -153,7 +155,13 @@ ssh root@203.0.113.7 'cozynode ios-profile' > cozynode.json
 
 **4. Импортируйте.** Откройте sing-box, на экране **Dashboard** нажмите **+** на карточке профиля, выберите **Import from File** и укажите `cozynode.json`. Подтвердите импорт.
 
-**5. Запустите.** В первый раз приложение предложит **Install Network Extension**: нажмите и разрешите добавить конфигурацию VPN (iOS попросит код-пароль). Затем нажмите **Start**. В строке состояния появится значок VPN.
+**5. Запустите.** В первый раз приложение предложит **Install Network Extension**: нажмите и разрешите добавить конфигурацию VPN (iOS попросит код-пароль). Затем нажмите **Start**. В строке состояния появится значок VPN, а внизу Dashboard — **Started** и кнопка остановки.
+
+<p>
+  <img src="img/09-iphone-import-from-file.png" width="31%" alt="sing-box на iPhone: New Profile, Import from File">
+  <img src="img/10-iphone-pick-profile.png" width="31%" alt="Выбор файла профиля">
+  <img src="img/11-iphone-started.png" width="31%" alt="Dashboard: профиль импортирован и запущен">
+</p>
 
 **6. Проверьте.** Откройте в Safari https://www.cloudflare.com/cdn-cgi/trace: в строках `ip=` и `loc=` должны быть ваш сервер и его страна.
 

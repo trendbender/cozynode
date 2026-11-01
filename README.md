@@ -4,6 +4,8 @@ Your own VPS as a private proxy for Chrome. One command on the server, one link 
 
 [![CozyNode demo](docs/media/demo.gif)](docs/media/demo.mp4)
 
+**Video with voiceover (55 s):** [YouTube](https://youtu.be/OrKzaXMDErI)
+
 **Step-by-step guide with screenshots, iPhone and Android:** [English](docs/guide.md) · [Русский](docs/guide.ru.md)
 
 ```

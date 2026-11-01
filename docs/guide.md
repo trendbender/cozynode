@@ -6,6 +6,8 @@ CozyNode turns a Linux VPS you rent into a private HTTPS proxy. Chrome uses it t
 
 [![CozyNode demo: paste the link, choose sites, add servers, switch](media/demo.gif)](media/demo.mp4)
 
+Video with voiceover, 55 seconds: [watch on YouTube](https://youtu.be/OrKzaXMDErI).
+
 All addresses and logins on this page are examples.
 
 - [1. What you need](#1-what-you-need)
@@ -151,7 +153,13 @@ For a second server, run the same command with its address and another file name
 
 **4. Import it.** Open sing-box, on the **Dashboard** press **+** on the profile card, choose **Import from File** and pick `cozynode.json`. Confirm the import.
 
-**5. Start.** The first time, the app asks to **Install Network Extension**: press it and allow adding the VPN configuration (iOS asks for your passcode). Then press **Start**. The VPN icon appears in the status bar.
+**5. Start.** The first time, the app asks to **Install Network Extension**: press it and allow adding the VPN configuration (iOS asks for your passcode). Then press **Start**. The VPN icon appears in the status bar, and the bar at the bottom of the Dashboard shows **Started** with a stop button.
+
+<p>
+  <img src="img/09-iphone-import-from-file.png" width="31%" alt="sing-box on iPhone: New Profile, Import from File">
+  <img src="img/10-iphone-pick-profile.png" width="31%" alt="Pick the profile file">
+  <img src="img/11-iphone-started.png" width="31%" alt="Dashboard: the profile is imported and started">
+</p>
 
 **6. Check.** Open https://www.cloudflare.com/cdn-cgi/trace in Safari: the `ip=` and `loc=` lines must show your server.
 
