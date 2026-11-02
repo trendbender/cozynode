@@ -56,7 +56,7 @@ async function render() {
     name.textContent = s;
     const pick = document.createElement("select");
     pick.title = t("siteServer");
-    const options = [["", t("activeServer", state.server.name)], ...state.servers.map((v) => [v.id, v.name]), [DIRECT, t("direct")]];
+    const options = [["", t("activeServer")], ...state.servers.map((v) => [v.id, v.name]), [DIRECT, t("direct")]];
     for (const [value, label] of options) pick.append(new Option(label, value));
     pick.value = options.some(([v]) => v === state.siteServer[s]) ? state.siteServer[s] : "";
     pick.onchange = () => saveRoute(s, pick.value);

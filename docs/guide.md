@@ -135,7 +135,7 @@ You can keep several servers, for example in different countries, and switch bet
 
 Next to every site in the list there is a server menu:
 
-- **Current (name)**: the site follows the server selected above and changes with it;
+- **Current server**: the site follows the server selected above and changes with it;
 - a server name: the site always goes through that server, whichever one is selected above;
 - **No proxy**: the site always goes direct.
 

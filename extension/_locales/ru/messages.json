@@ -93,12 +93,7 @@
     "message": "Сервер для этого сайта"
   },
   "activeServer": {
-    "message": "Текущий ($name$)",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
+    "message": "Текущий сервер"
   },
   "direct": {
     "message": "Без прокси"

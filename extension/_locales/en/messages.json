@@ -93,12 +93,7 @@
     "message": "Server for this site"
   },
   "activeServer": {
-    "message": "Current ($name$)",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
+    "message": "Current server"
   },
   "direct": {
     "message": "No proxy"

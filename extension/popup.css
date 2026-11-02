@@ -122,7 +122,8 @@ button { font: inherit; cursor: pointer; }
 #sites li { display: flex; align-items: center; gap: 6px; padding: 3px 2px; border-bottom: 1px solid var(--line); }
 #sites .site { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 #sites select {
-  max-width: 120px;
+  flex: 0 0 132px;
+  width: 132px;
   padding: 2px 4px;
   border: 1px solid var(--line);
   border-radius: 6px;
