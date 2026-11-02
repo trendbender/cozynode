@@ -16,6 +16,7 @@
     <p class="muted" data-i18n="setupHint"></p>
     <p class="small"><a data-href="guideUrl" data-i18n="guide" target="_blank" rel="noopener"></a></p>
     <textarea id="link" rows="3" spellcheck="false" placeholder="cozy://user:password@1.2.3.4:8443#my-server"></textarea>
+    <input id="importPass" type="password" autocomplete="off" data-i18n-ph="importPassHint" hidden>
     <p id="setupError" class="error" hidden></p>
     <button id="connect" class="primary" data-i18n="connect"></button>
     <button id="cancelAdd" class="link" data-i18n="cancel" hidden></button>
@@ -53,6 +54,11 @@
       <button id="export" class="link" data-i18n="export"></button>
       <button id="forget" class="link danger" data-i18n="forget"></button>
     </footer>
+    <form id="exportBox" hidden>
+      <input id="exportPass" type="password" autocomplete="new-password" data-i18n-ph="exportPassHint">
+      <button type="submit" class="secondary" data-i18n="exportCopy"></button>
+    </form>
+    <p id="exportError" class="error" hidden></p>
     <p id="exported" class="muted small" data-i18n="exported" hidden></p>
   </section>
 

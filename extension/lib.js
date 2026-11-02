@@ -136,7 +136,49 @@ export function serverFor(state, challenger) {
   return [state.server, ...state.servers].find((v) => v && v.host === host && v.port === challenger?.port) || null;
 }
 
-// Settings moved between browsers as JSON text; it holds the passwords.
+// Exported settings are encrypted with a password: PBKDF2-SHA256 -> AES-GCM-256.
+// Format: "cozynode-enc:v1:" + base64(salt[16] | iv[12] | ciphertext).
+const ENC_PREFIX = "cozynode-enc:v1:";
+const PBKDF2_ITERATIONS = 600000;
+
+export const isEncrypted = (raw) => String(raw || "").trim().startsWith(ENC_PREFIX);
+
+const toB64 = (bytes) => btoa(String.fromCharCode(...bytes));
+const fromB64 = (text) => Uint8Array.from(atob(text), (c) => c.charCodeAt(0));
+
+async function passwordKey(password, salt) {
+  const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey(
+    { name: "PBKDF2", salt, iterations: PBKDF2_ITERATIONS, hash: "SHA-256" },
+    base,
+    { name: "AES-GCM", length: 256 },
+    false,
+    ["encrypt", "decrypt"]
+  );
+}
+
+export async function encryptText(text, password) {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const key = await passwordKey(password, salt);
+  const data = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, new TextEncoder().encode(text)));
+  return ENC_PREFIX + toB64(new Uint8Array([...salt, ...iv, ...data]));
+}
+
+// Returns the text, or null for a wrong password or damaged input.
+export async function decryptText(raw, password) {
+  try {
+    const bytes = fromB64(String(raw).trim().slice(ENC_PREFIX.length).replace(/\s+/g, ""));
+    if (bytes.length < 16 + 12 + 16) return null;
+    const key = await passwordKey(password, bytes.slice(0, 16));
+    const data = await crypto.subtle.decrypt({ name: "AES-GCM", iv: bytes.slice(16, 28) }, key, bytes.slice(28));
+    return new TextDecoder().decode(data);
+  } catch {
+    return null;
+  }
+}
+
+// Settings moved between browsers as JSON text (encrypted by the popup); it holds the passwords.
 const EXPORT_KEYS = ["servers", "activeId", "mode", "sites", "siteServer"];
 
 export async function exportSettings() {

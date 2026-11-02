@@ -63,7 +63,7 @@ Install CozyNode from the [Chrome Web Store](https://chromewebstore.google.com/d
 - **All sites** or **Only selected sites** (the "Add example.com" button takes the current tab).
 - **Several servers**: "+ Add server" pastes one more link (or several, one per line), a click on a server switches to it. The "?" in the popup opens the guide.
 - **A server per site**: every site in the list can go through the current server, a fixed server or no proxy, e.g. everything through Germany and one site through Moscow.
-- **Export**: copies servers and sites as text; paste it into CozyNode in another browser to move the settings (it contains the passwords).
+- **Export**: copies servers and sites as text encrypted with a password you choose (AES-GCM, PBKDF2-SHA256); paste it into CozyNode in another browser and enter the password to move the settings.
 - WebRTC is limited to the proxy while it is on, so the real IP does not leak.
 - DNS is resolved on the server.
 - The check button shows the IP and country that sites see (via Cloudflare `cdn-cgi/trace`).

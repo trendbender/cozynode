@@ -102,12 +102,27 @@
     "message": "Export"
   },
   "exported": {
-    "message": "Settings are copied. Paste them into CozyNode in another browser. They include your passwords, so keep them private."
+    "message": "Encrypted settings are copied. Paste them into CozyNode in another browser and enter the same password. Without the password nobody can read them."
   },
   "guide": {
     "message": "Step-by-step guide with screenshots"
   },
   "guideUrl": {
     "message": "https://4queries.com/tools/cozynode/guide/"
+  },
+  "exportPassHint": {
+    "message": "Password for the export, 8+ characters"
+  },
+  "exportCopy": {
+    "message": "Copy"
+  },
+  "importPassHint": {
+    "message": "Password set at export"
+  },
+  "errPassShort": {
+    "message": "The password needs at least 8 characters."
+  },
+  "errDecrypt": {
+    "message": "Wrong password, or the text is damaged."
   }
 }

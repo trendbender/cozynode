@@ -102,12 +102,27 @@
     "message": "Экспорт"
   },
   "exported": {
-    "message": "Настройки скопированы. Вставьте их в CozyNode в другом браузере. В них ваши пароли, никому не пересылайте."
+    "message": "Зашифрованные настройки скопированы. Вставьте их в CozyNode в другом браузере и введите тот же пароль. Без пароля их никто не прочитает."
   },
   "guide": {
     "message": "Пошаговая инструкция со скриншотами"
   },
   "guideUrl": {
     "message": "https://github.com/trendbender/cozynode/blob/main/docs/guide.ru.md"
+  },
+  "exportPassHint": {
+    "message": "Пароль для экспорта, от 8 символов"
+  },
+  "exportCopy": {
+    "message": "Скопировать"
+  },
+  "importPassHint": {
+    "message": "Пароль, заданный при экспорте"
+  },
+  "errPassShort": {
+    "message": "Пароль должен быть не короче 8 символов."
+  },
+  "errDecrypt": {
+    "message": "Неверный пароль или текст повреждён."
   }
 }

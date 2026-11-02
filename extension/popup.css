@@ -51,7 +51,7 @@ h1 { font-size: 15px; margin: 0 0 4px; }
 .muted { color: var(--muted); }
 .small { font-size: 12px; }
 .error { color: var(--danger); margin: 6px 0; }
-textarea, input[type=text] {
+textarea, input[type=text], input[type=password] {
   width: 100%;
   padding: 8px;
   border: 1px solid var(--line);
@@ -152,3 +152,6 @@ button { font: inherit; cursor: pointer; }
 #addForm { display: flex; gap: 6px; }
 footer { display: flex; justify-content: space-between; gap: 8px; margin-top: 12px; }
 #exported { margin: 6px 0 0; }
+#exportBox { display: flex; gap: 6px; margin-top: 8px; }
+#exportBox[hidden] { display: none; }
+#importPass { margin-top: 6px; }

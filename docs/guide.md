@@ -147,7 +147,7 @@ A more specific entry wins: with `example.com` on one server and `api.example.co
 
 ### Move settings to another browser
 
-**Export** copies all servers, sites and their servers to the clipboard. In the other browser open CozyNode, press **+ Add server** (or use the first screen), paste the text and press **Connect**: the servers and sites are added to the ones already there. The text contains your passwords, so do not send it to anyone.
+**Export** asks for a password (8+ characters) and copies all servers, sites and their servers to the clipboard, encrypted with that password (AES-GCM, key from PBKDF2-SHA256). In the other browser open CozyNode, press **+ Add server** (or use the first screen), paste the text, enter the same password and press **Connect**: the servers and sites are added to the ones already there. Without the password the text is unreadable; send the password by a different channel than the text.
 
 ## 6. iPhone and iPad
 

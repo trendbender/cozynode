@@ -1,10 +1,11 @@
-import { CHECK_URL, DIRECT, addServer, exportSettings, getState, importSettings, normalizeSite, parseLink, parseSettings, removeServer, serverId } from "./lib.js";
+import { CHECK_URL, DIRECT, addServer, decryptText, encryptText, exportSettings, getState, importSettings, isEncrypted, normalizeSite, parseLink, parseSettings, removeServer, serverId } from "./lib.js";
 
 const $ = (id) => document.getElementById(id);
 const t = (key, sub) => chrome.i18n.getMessage(key, sub) || key;
 
 document.querySelectorAll("[data-i18n]").forEach((el) => (el.textContent = t(el.dataset.i18n)));
 document.querySelectorAll("[data-href]").forEach((el) => (el.href = t(el.dataset.href)));
+document.querySelectorAll("[data-i18n-ph]").forEach((el) => (el.placeholder = t(el.dataset.i18nPh)));
 $("help").title = t("guide");
 
 let currentSite = "";
@@ -107,16 +108,27 @@ async function check() {
   render();
 }
 
+const setupError = (key) => {
+  $("setupError").hidden = false;
+  $("setupError").textContent = t(key);
+};
+
+// Encrypted settings need the export password: show its field only for them.
+$("link").addEventListener("input", () => {
+  $("importPass").hidden = !isEncrypted($("link").value);
+});
+
 $("connect").onclick = async () => {
   // One or more cozy:// links (one per line), or exported settings
-  const raw = $("link").value;
+  let raw = $("link").value;
+  if (isEncrypted(raw)) {
+    const plain = await decryptText(raw, $("importPass").value);
+    if (plain === null) return setupError("errDecrypt");
+    raw = plain;
+  }
   const links = raw.split(/\s+/).filter(Boolean).map(parseLink);
   const settings = links.length && links.every(Boolean) ? null : parseSettings(raw);
-  if (!settings && !(links.length && links.every(Boolean))) {
-    $("setupError").hidden = false;
-    $("setupError").textContent = t("errLink");
-    return;
-  }
+  if (!settings && !(links.length && links.every(Boolean))) return setupError("errLink");
   if (settings) await importSettings(settings);
   else {
     for (const server of links) await addServer(server);
@@ -124,6 +136,8 @@ $("connect").onclick = async () => {
   }
   adding = false;
   $("link").value = "";
+  $("importPass").value = "";
+  $("importPass").hidden = true;
   $("setupError").hidden = true;
   await render();
   setTimeout(check, 400);
@@ -180,8 +194,23 @@ $("addForm").onsubmit = async (e) => {
 
 $("check").onclick = check;
 
-$("export").onclick = async () => {
-  await navigator.clipboard.writeText(await exportSettings());
+$("export").onclick = () => {
+  $("exportBox").hidden = !$("exportBox").hidden;
+  $("exported").hidden = true;
+  $("exportError").hidden = true;
+  if (!$("exportBox").hidden) $("exportPass").focus();
+};
+
+// The export always leaves the popup encrypted with the password typed here.
+$("exportBox").onsubmit = async (e) => {
+  e.preventDefault();
+  const password = $("exportPass").value;
+  $("exportError").hidden = password.length >= 8;
+  $("exportError").textContent = t("errPassShort");
+  if (password.length < 8) return;
+  await navigator.clipboard.writeText(await encryptText(await exportSettings(), password));
+  $("exportPass").value = "";
+  $("exportBox").hidden = true;
   $("exported").hidden = false;
 };
 
