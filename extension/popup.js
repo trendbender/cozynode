@@ -1,9 +1,11 @@
-import { CHECK_URL, DIRECT, addServer, exportSettings, getState, importSettings, normalizeSite, parseLink, parseSettings, removeServer } from "./lib.js";
+import { CHECK_URL, DIRECT, addServer, exportSettings, getState, importSettings, normalizeSite, parseLink, parseSettings, removeServer, serverId } from "./lib.js";
 
 const $ = (id) => document.getElementById(id);
 const t = (key, sub) => chrome.i18n.getMessage(key, sub) || key;
 
 document.querySelectorAll("[data-i18n]").forEach((el) => (el.textContent = t(el.dataset.i18n)));
+document.querySelectorAll("[data-href]").forEach((el) => (el.href = t(el.dataset.href)));
+$("help").title = t("guide");
 
 let currentSite = "";
 let adding = false; // setup screen opened from "Add server" while servers exist
@@ -106,16 +108,20 @@ async function check() {
 }
 
 $("connect").onclick = async () => {
+  // One or more cozy:// links (one per line), or exported settings
   const raw = $("link").value;
-  const server = parseLink(raw);
-  const settings = server ? null : parseSettings(raw);
-  if (!server && !settings) {
+  const links = raw.split(/\s+/).filter(Boolean).map(parseLink);
+  const settings = links.length && links.every(Boolean) ? null : parseSettings(raw);
+  if (!settings && !(links.length && links.every(Boolean))) {
     $("setupError").hidden = false;
     $("setupError").textContent = t("errLink");
     return;
   }
-  if (server) await addServer(server);
-  else await importSettings(settings);
+  if (settings) await importSettings(settings);
+  else {
+    for (const server of links) await addServer(server);
+    await chrome.storage.local.set({ activeId: serverId(links[0]) });
+  }
   adding = false;
   $("link").value = "";
   $("setupError").hidden = true;

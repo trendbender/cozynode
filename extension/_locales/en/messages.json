@@ -9,7 +9,7 @@
     "message": "Connect your server"
   },
   "setupHint": {
-    "message": "Paste the cozy:// link printed by the server installer, or settings exported from CozyNode."
+    "message": "Paste the cozy:// link printed by the server installer (several links: one per line), or settings exported from CozyNode."
   },
   "connect": {
     "message": "Connect"
@@ -61,7 +61,7 @@
     "message": "No connection through the server. Is it running and is the port open?"
   },
   "errLink": {
-    "message": "This does not look like a cozy:// link or CozyNode settings."
+    "message": "This does not look like cozy:// links or CozyNode settings."
   },
   "errAuth": {
     "message": "The server rejected the login. Paste a fresh link."
@@ -103,5 +103,11 @@
   },
   "exported": {
     "message": "Settings are copied. Paste them into CozyNode in another browser. They include your passwords, so keep them private."
+  },
+  "guide": {
+    "message": "Step-by-step guide with screenshots"
+  },
+  "guideUrl": {
+    "message": "https://4queries.com/tools/cozynode/guide/"
   }
 }

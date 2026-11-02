@@ -8,11 +8,13 @@
   <header>
     <img src="icons/icon32.png" alt="" width="20" height="20">
     <span class="brand">CozyNode</span>
+    <a id="help" class="help" data-href="guideUrl" target="_blank" rel="noopener">?</a>
   </header>
 
   <section id="setup" hidden>
     <h1 data-i18n="setupTitle"></h1>
     <p class="muted" data-i18n="setupHint"></p>
+    <p class="small"><a data-href="guideUrl" data-i18n="guide" target="_blank" rel="noopener"></a></p>
     <textarea id="link" rows="3" spellcheck="false" placeholder="cozy://user:password@1.2.3.4:8443#my-server"></textarea>
     <p id="setupError" class="error" hidden></p>
     <button id="connect" class="primary" data-i18n="connect"></button>

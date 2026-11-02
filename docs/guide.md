@@ -129,6 +129,8 @@ You can keep several servers, for example in different countries, and switch bet
 
 ![Two servers, the active one is highlighted](img/07-servers.png)
 
+You can paste several links at once, one per line: all of them are added and the first one becomes active.
+
 **Remove server** removes only the selected server; the others stay. Pasting the same link again does not create a duplicate, it updates the existing entry.
 
 ### Different sites through different servers
