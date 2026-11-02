@@ -1,6 +1,6 @@
-import { buildProxyConfig, getState } from "./lib.js";
+import { buildProxyConfig, getState, serverFor } from "./lib.js";
 
-// Proxy auth: answer only challenges from our own proxy, and give up after
+// Proxy auth: answer only challenges from our own proxies, and give up after
 // two attempts per request so a wrong password cannot loop forever.
 const attempts = new Map();
 
@@ -8,8 +8,8 @@ chrome.webRequest.onAuthRequired.addListener(
   (details, callback) => {
     if (!details.isProxy) return callback({});
     getState().then((state) => {
-      const s = state.server;
-      if (!state.enabled || !s || details.challenger?.host !== s.host) return callback({});
+      const s = serverFor(state, details.challenger);
+      if (!state.enabled || !s) return callback({});
       const n = (attempts.get(details.requestId) || 0) + 1;
       attempts.set(details.requestId, n);
       if (n > 2) {
@@ -63,7 +63,7 @@ async function paint() {
 
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area !== "local") return;
-  if (changes.enabled || changes.servers || changes.activeId || changes.mode || changes.sites) apply();
+  if (changes.enabled || changes.servers || changes.activeId || changes.mode || changes.sites || changes.siteServer) apply();
   else if (changes.lastError) paint();
 });
 

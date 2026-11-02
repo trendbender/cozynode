@@ -85,7 +85,7 @@ Your websites keep working as before. Through the proxy the server's own sites a
 
 ## 3. Connect Chrome
 
-Install CozyNode from the Chrome Web Store. Until the listing is live, install it by hand:
+Install CozyNode from the [Chrome Web Store](https://chromewebstore.google.com/detail/emdkbjbbggnlgmoahoffdelibpchfieo): **Add to Chrome**, then go to step 3. To install a build from GitHub by hand instead:
 
 1. Download `cozynode-<version>.zip` from [Releases](https://github.com/trendbender/cozynode/releases) and unzip it.
 2. Open `chrome://extensions`, turn on **Developer mode** (top right), press **Load unpacked** and pick the unzipped folder.
@@ -109,7 +109,7 @@ The big button turns the proxy off and on. While it is on:
 
 ## 4. All sites or only some
 
-- **All sites**: all Chrome traffic goes through the server.
+- **All sites**: all Chrome traffic goes through the server. The sites in the list are exceptions: each can go through another server or without the proxy (section 5).
 - **Only selected sites**: only the sites in the list go through the server, everything else goes direct and at full speed. Type a domain and press **+**, or press **Add example.com** to add the site of the current tab. A domain also covers its subdomains: `example.com` includes `www.example.com` and `docs.example.com`.
 
 ![Only selected sites](img/05-selected-sites.png)
@@ -130,6 +130,22 @@ You can keep several servers, for example in different countries, and switch bet
 ![Two servers, the active one is highlighted](img/07-servers.png)
 
 **Remove server** removes only the selected server; the others stay. Pasting the same link again does not create a duplicate, it updates the existing entry.
+
+### Different sites through different servers
+
+Next to every site in the list there is a server menu:
+
+- **Current (name)**: the site follows the server selected above and changes with it;
+- a server name: the site always goes through that server, whichever one is selected above;
+- **No proxy**: the site always goes direct.
+
+Example: German server for everything, one Russian site through a server in Moscow. Select the German server, keep **All sites**, add the Russian site and pick the Moscow server in its menu. In **Only selected sites** mode the menu works the same way, and sites outside the list go direct.
+
+A more specific entry wins: with `example.com` on one server and `api.example.com` on another, `api.example.com` uses its own server.
+
+### Move settings to another browser
+
+**Export** copies all servers, sites and their servers to the clipboard. In the other browser open CozyNode, press **+ Add server** (or use the first screen), paste the text and press **Connect**: the servers and sites are added to the ones already there. The text contains your passwords, so do not send it to anyone.
 
 ## 6. iPhone and iPad
 

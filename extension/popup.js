@@ -1,4 +1,4 @@
-import { CHECK_URL, addServer, getState, normalizeSite, parseLink, removeServer } from "./lib.js";
+import { CHECK_URL, DIRECT, addServer, exportSettings, getState, importSettings, normalizeSite, parseLink, parseSettings, removeServer } from "./lib.js";
 
 const $ = (id) => document.getElementById(id);
 const t = (key, sub) => chrome.i18n.getMessage(key, sub) || key;
@@ -43,17 +43,28 @@ async function render() {
   $("mainError").textContent = state.lastError;
   document.querySelectorAll("input[name=mode]").forEach((r) => (r.checked = r.value === state.mode));
 
-  $("sitesBox").hidden = state.mode !== "sites";
+  // Listed sites go through their own server in both modes; in "all" mode
+  // the list holds the exceptions, in "sites" mode the only proxied sites.
+  $("sitesBox").hidden = false;
+  $("sitesHint").textContent = t(state.mode === "sites" ? "sitesHintOnly" : "sitesHintAll");
   const ul = $("sites");
   ul.replaceChildren();
   for (const s of state.sites) {
     const li = document.createElement("li");
-    li.textContent = s;
+    const name = document.createElement("span");
+    name.className = "site";
+    name.textContent = s;
+    const pick = document.createElement("select");
+    pick.title = t("siteServer");
+    const options = [["", t("activeServer", state.server.name)], ...state.servers.map((v) => [v.id, v.name]), [DIRECT, t("direct")]];
+    for (const [value, label] of options) pick.append(new Option(label, value));
+    pick.value = options.some(([v]) => v === state.siteServer[s]) ? state.siteServer[s] : "";
+    pick.onchange = () => saveRoute(s, pick.value);
     const x = document.createElement("button");
     x.textContent = "×";
     x.title = t("remove");
     x.onclick = () => saveSites(state.sites.filter((v) => v !== s));
-    li.append(x);
+    li.append(name, pick, x);
     ul.append(li);
   }
   const btn = $("addCurrent");
@@ -62,7 +73,18 @@ async function render() {
 }
 
 async function saveSites(sites) {
-  await chrome.storage.local.set({ sites: [...new Set(sites)].sort() });
+  const { siteServer } = await getState();
+  const routes = Object.fromEntries(Object.entries(siteServer).filter(([k]) => sites.includes(k)));
+  await chrome.storage.local.set({ sites: [...new Set(sites)].sort(), siteServer: routes });
+  render();
+}
+
+async function saveRoute(site, id) {
+  const { siteServer } = await getState();
+  const routes = { ...siteServer };
+  if (id) routes[site] = id;
+  else delete routes[site];
+  await chrome.storage.local.set({ siteServer: routes });
   render();
 }
 
@@ -84,13 +106,16 @@ async function check() {
 }
 
 $("connect").onclick = async () => {
-  const server = parseLink($("link").value);
-  if (!server) {
+  const raw = $("link").value;
+  const server = parseLink(raw);
+  const settings = server ? null : parseSettings(raw);
+  if (!server && !settings) {
     $("setupError").hidden = false;
     $("setupError").textContent = t("errLink");
     return;
   }
-  await addServer(server);
+  if (server) await addServer(server);
+  else await importSettings(settings);
   adding = false;
   $("link").value = "";
   $("setupError").hidden = true;
@@ -148,6 +173,11 @@ $("addForm").onsubmit = async (e) => {
 };
 
 $("check").onclick = check;
+
+$("export").onclick = async () => {
+  await navigator.clipboard.writeText(await exportSettings());
+  $("exported").hidden = false;
+};
 
 $("forget").onclick = async () => {
   const { server } = await getState();

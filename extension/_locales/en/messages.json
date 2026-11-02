@@ -9,7 +9,7 @@
     "message": "Connect your server"
   },
   "setupHint": {
-    "message": "Paste the cozy:// link printed by the server installer."
+    "message": "Paste the cozy:// link printed by the server installer, or settings exported from CozyNode."
   },
   "connect": {
     "message": "Connect"
@@ -61,7 +61,7 @@
     "message": "No connection through the server. Is it running and is the port open?"
   },
   "errLink": {
-    "message": "This does not look like a cozy:// link."
+    "message": "This does not look like a cozy:// link or CozyNode settings."
   },
   "errAuth": {
     "message": "The server rejected the login. Paste a fresh link."
@@ -82,5 +82,31 @@
   },
   "cancel": {
     "message": "Cancel"
+  },
+  "sitesHintAll": {
+    "message": "Exceptions: send a site through another server or without the proxy."
+  },
+  "sitesHintOnly": {
+    "message": "Only these sites go through the proxy, each through the server you pick."
+  },
+  "siteServer": {
+    "message": "Server for this site"
+  },
+  "activeServer": {
+    "message": "Current ($name$)",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "direct": {
+    "message": "No proxy"
+  },
+  "export": {
+    "message": "Export"
+  },
+  "exported": {
+    "message": "Settings are copied. Paste them into CozyNode in another browser. They include your passwords, so keep them private."
   }
 }

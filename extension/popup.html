@@ -37,6 +37,7 @@
     </div>
 
     <div id="sitesBox" hidden>
+      <p id="sitesHint" class="muted small"></p>
       <button id="addCurrent" class="secondary"></button>
       <ul id="sites"></ul>
       <form id="addForm">
@@ -47,8 +48,10 @@
 
     <footer>
       <button id="check" class="link" data-i18n="check"></button>
+      <button id="export" class="link" data-i18n="export"></button>
       <button id="forget" class="link danger" data-i18n="forget"></button>
     </footer>
+    <p id="exported" class="muted small" data-i18n="exported" hidden></p>
   </section>
 
   <script type="module" src="popup.js"></script>

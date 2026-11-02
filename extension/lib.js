@@ -11,8 +11,11 @@ export const DEFAULTS = {
   enabled: false,
   mode: "all", // "all" | "sites"
   sites: [],
+  siteServer: {}, // {"example.com": serverId | DIRECT}; a missing entry means the active server
   lastError: "",
 };
+
+export const DIRECT = "direct";
 
 // Accepts cozy://user:pass@host:port#name and https://user:pass@host:port
 export function parseLink(raw) {
@@ -49,30 +52,51 @@ function proxyHost(server) {
 }
 
 const LOCAL_BYPASS = ["<local>", "localhost", "127.0.0.1", "::1", "10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"];
+const LOCAL_NETS = [["127.0.0.0", "255.0.0.0"], ["10.0.0.0", "255.0.0.0"], ["172.16.0.0", "255.240.0.0"], ["192.168.0.0", "255.255.0.0"]];
+
+const target = (server) => `HTTPS ${proxyHost(server)}:${server.port}`;
+
+// PAC result for every listed site: its own server, DIRECT, or the active server.
+export function siteRoutes(state) {
+  const routes = {};
+  for (const site of state.sites) {
+    const pick = state.siteServer[site];
+    const server = state.servers.find((v) => v.id === pick) || state.server;
+    routes[site] = pick === DIRECT ? "DIRECT" : target(server);
+  }
+  return routes;
+}
 
 export function buildProxyConfig(state) {
-  const { server, mode, sites } = state;
-  if (mode === "sites") {
-    const list = JSON.stringify([...new Set([...sites, CHECK_HOST])]);
-    const target = `HTTPS ${proxyHost(server)}:${server.port}`;
-    const pac = `var SITES = ${list};
+  const { server, mode } = state;
+  const routes = siteRoutes(state);
+  const fallback = mode === "sites" ? "DIRECT" : target(server);
+  if (mode !== "sites" && Object.values(routes).every((r) => r === fallback)) {
+    return {
+      mode: "fixed_servers",
+      rules: {
+        singleProxy: { scheme: "https", host: server.host, port: server.port },
+        bypassList: LOCAL_BYPASS,
+      },
+    };
+  }
+  // The most specific listed domain wins: a.example.com before example.com.
+  const pac = `var CHECK = ${JSON.stringify(CHECK_HOST)}, ACTIVE = ${JSON.stringify(target(server))};
+var ROUTES = ${JSON.stringify(routes)}, FALLBACK = ${JSON.stringify(fallback)};
+var LOCAL = ${JSON.stringify(LOCAL_NETS)};
 function FindProxyForURL(url, host) {
   host = host.toLowerCase();
-  for (var i = 0; i < SITES.length; i++) {
-    var d = SITES[i];
-    if (host === d || dnsDomainIs(host, "." + d)) return "${target}";
+  if (host === CHECK) return ACTIVE;
+  for (var d = host; d; d = d.indexOf(".") < 0 ? "" : d.slice(d.indexOf(".") + 1)) {
+    if (Object.prototype.hasOwnProperty.call(ROUTES, d)) return ROUTES[d];
   }
-  return "DIRECT";
+  if (FALLBACK === "DIRECT" || isPlainHostName(host) || host === "localhost" || host === "::1") return "DIRECT";
+  if (/^\\d+\\.\\d+\\.\\d+\\.\\d+$/.test(host)) {
+    for (var i = 0; i < LOCAL.length; i++) if (isInNet(host, LOCAL[i][0], LOCAL[i][1])) return "DIRECT";
+  }
+  return FALLBACK;
 }`;
-    return { mode: "pac_script", pacScript: { data: pac, mandatory: true } };
-  }
-  return {
-    mode: "fixed_servers",
-    rules: {
-      singleProxy: { scheme: "https", host: server.host, port: server.port },
-      bypassList: LOCAL_BYPASS,
-    },
-  };
+  return { mode: "pac_script", pacScript: { data: pac, mandatory: true } };
 }
 
 export const serverId = (s) => `${s.username}@${s.host}:${s.port}`;
@@ -99,8 +123,61 @@ export async function addServer(server) {
 }
 
 export async function removeServer(id) {
-  const { servers, activeId, enabled } = await getState();
+  const { servers, activeId, enabled, siteServer } = await getState();
   const rest = servers.filter((v) => v.id !== id);
   const next = id === activeId ? rest[0]?.id || "" : activeId;
-  await chrome.storage.local.set({ servers: rest, activeId: next, enabled: enabled && rest.length > 0, lastError: "" });
+  const routes = Object.fromEntries(Object.entries(siteServer).filter(([, v]) => v !== id));
+  await chrome.storage.local.set({ servers: rest, activeId: next, siteServer: routes, enabled: enabled && rest.length > 0, lastError: "" });
+}
+
+// Server that asked for proxy auth, matched by host and port; the active one wins a tie.
+export function serverFor(state, challenger) {
+  const host = String(challenger?.host || "").replace(/^\[|\]$/g, "");
+  return [state.server, ...state.servers].find((v) => v && v.host === host && v.port === challenger?.port) || null;
+}
+
+// Settings moved between browsers as JSON text; it holds the passwords.
+const EXPORT_KEYS = ["servers", "activeId", "mode", "sites", "siteServer"];
+
+export async function exportSettings() {
+  const state = await getState();
+  const out = { cozynode: 1 };
+  for (const k of EXPORT_KEYS) out[k] = state[k];
+  return JSON.stringify(out);
+}
+
+export function parseSettings(raw) {
+  let d;
+  try {
+    d = JSON.parse(String(raw || "").trim());
+  } catch {
+    return null;
+  }
+  if (d?.cozynode !== 1 || !Array.isArray(d.servers)) return null;
+  const servers = d.servers
+    .filter((v) => v && typeof v.host === "string" && Number.isInteger(v.port) && v.username && v.password)
+    .map(({ host, port, username, password, name }) => ({ host, port, username, password, name: name || host }));
+  if (!servers.length) return null;
+  const sites = (Array.isArray(d.sites) ? d.sites : []).map(normalizeSite).filter(Boolean);
+  const siteServer = d.siteServer && typeof d.siteServer === "object" ? d.siteServer : {};
+  return { servers, activeId: d.activeId, mode: d.mode === "sites" ? "sites" : "all", sites, siteServer };
+}
+
+// Adds imported servers and sites to what is already here.
+export async function importSettings(data) {
+  const state = await getState();
+  const imported = data.servers.map((v) => ({ ...v, id: serverId(v) }));
+  const ids = new Set(imported.map((v) => v.id));
+  const servers = [...state.servers.filter((v) => !ids.has(v.id)), ...imported];
+  const known = new Set([...servers.map((v) => v.id), DIRECT]);
+  const routes = Object.fromEntries(Object.entries(data.siteServer).filter(([k, v]) => data.sites.includes(k) && known.has(v)));
+  await chrome.storage.local.set({
+    servers,
+    activeId: ids.has(data.activeId) ? data.activeId : state.activeId || imported[0].id,
+    mode: data.mode,
+    sites: [...new Set([...state.sites, ...data.sites])].sort(),
+    siteServer: { ...state.siteServer, ...routes },
+    enabled: true,
+    lastError: "",
+  });
 }
