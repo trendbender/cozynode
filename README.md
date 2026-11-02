@@ -33,7 +33,7 @@ The script downloads a pinned [sing-box](https://github.com/SagerNet/sing-box) r
 cozy://cozyXXXXXX:************************@203.0.113.7:443#my-vps
 ```
 
-The installer keeps a copy of itself, so later commands are short: `sudo cozynode link` (show the link again), `add-user` (a second login for a friend or device), `ios-profile` (sing-box app profile, see below), `status`, `install` (update sing-box and config, logins stay), `uninstall`.
+The installer keeps a copy of itself, so later commands are short: `sudo cozynode link` (show the link again), `add-user` (a second login for a friend or device), `rotate [N]` (new password for login N, the old link stops working), `ios-profile` (sing-box app profile, see below), `status`, `install` (update sing-box and config, logins stay), `uninstall`.
 
 Options: `--port N` (default 443, or 8443 if 443 is busy), `--host IP|domain`, `--name label`.
 

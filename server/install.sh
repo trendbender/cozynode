@@ -5,7 +5,7 @@
 #   curl -fsSL https://raw.githubusercontent.com/trendbender/cozynode/main/server/install.sh | sudo bash
 #
 # After install the script is kept as /opt/cozynode/install.sh with a short alias:
-#   sudo cozynode link | add-user | ios-profile [N] | status | install | uninstall
+#   sudo cozynode link | add-user | rotate [N] | ios-profile [N] | status | install | uninstall
 #
 # Commands:
 #   install.sh [install] [--port N] [--host IP|DOMAIN] [--acme-http-port N] [--name LABEL]
@@ -341,7 +341,7 @@ EOF
   wait_cert && self_test || true
   save_self
   print_link 0
-  if [ -x "$CLI" ]; then echo "  Later: sudo cozynode link | add-user | ios-profile | status | uninstall"; fi
+  if [ -x "$CLI" ]; then echo "  Later: sudo cozynode link | add-user | rotate | ios-profile | status | uninstall"; fi
 }
 
 cmd_add_user() {
@@ -354,6 +354,24 @@ PY
   write_config
   systemctl restart cozynode
   local n; n=$(python3 -c 'import json;print(len(json.load(open("'"$CONF_DIR"'/users.json")))-1)')
+  print_link "$n"
+}
+
+# New password for login N (default 0); the username stays, so pasting the new
+# link into the extension updates the existing server entry.
+cmd_rotate() {
+  need_root; [ -f "$META" ] || die "not installed"
+  local n="${1:-0}"
+  python3 - "$CONF_DIR/users.json" "$n" "$(rand 24)" <<'PY' || die "no login #$n"
+import json, sys
+p, n, pw = sys.argv[1], int(sys.argv[2]), sys.argv[3]
+d = json.load(open(p))
+if not 0 <= n < len(d): sys.exit(1)
+d[n]["password"] = pw; json.dump(d, open(p, "w"))
+PY
+  write_config
+  systemctl restart cozynode
+  say "login #$n has a new password; the old link no longer works"
   print_link "$n"
 }
 
@@ -383,6 +401,7 @@ case "${1:-install}" in
   --*) cmd_install "$@" ;;
   link) need_root; print_link "${2:-0}" ;;
   add-user) cmd_add_user ;;
+  rotate) cmd_rotate "${2:-0}" ;;
   ios-profile) need_root; [ -f "$META" ] || die "not installed"; print_ios_profile "${2:-0}" ;;
   status) cmd_status ;;
   uninstall) cmd_uninstall ;;

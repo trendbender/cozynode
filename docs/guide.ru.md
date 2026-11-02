@@ -54,6 +54,7 @@ curl -fsSL https://raw.githubusercontent.com/trendbender/cozynode/main/server/in
 |---|---|
 | `sudo cozynode link` | показать ссылку ещё раз |
 | `sudo cozynode add-user` | отдельный логин для другого человека или устройства |
+| `sudo cozynode rotate [N]` | новый пароль для логина N (по умолчанию 0), если ссылка утекла; старая ссылка перестаёт работать, новую вставьте в расширение, профили телефона с этим логином импортируйте заново |
 | `sudo cozynode ios-profile [N]` | профиль для приложения sing-box на телефоне (логин N, по умолчанию 0) |
 | `sudo cozynode status` | состояние службы и сертификата |
 | `sudo cozynode install` | обновить sing-box и конфиг, логины сохраняются |

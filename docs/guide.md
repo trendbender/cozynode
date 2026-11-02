@@ -54,6 +54,7 @@ Commands you will need later (the installer adds the short `cozynode` command):
 |---|---|
 | `sudo cozynode link` | show the link again |
 | `sudo cozynode add-user` | a separate login for another person or device |
+| `sudo cozynode rotate [N]` | new password for login N (0 by default) if a link leaked; the old link stops working, paste the new one into the extension and re-import phone profiles of that login |
 | `sudo cozynode ios-profile [N]` | profile for the sing-box app on a phone (login N, default 0) |
 | `sudo cozynode status` | service state and certificate |
 | `sudo cozynode install` | update sing-box and the config, logins stay |
