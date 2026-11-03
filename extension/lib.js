@@ -101,6 +101,12 @@ function FindProxyForURL(url, host) {
 
 export const serverId = (s) => `${s.username}@${s.host}:${s.port}`;
 
+// True when another extension (a second CozyNode, FoxyProxy...) holds Chrome's proxy setting.
+export async function proxyConflict() {
+  const { levelOfControl } = await chrome.proxy.settings.get({});
+  return levelOfControl === "controlled_by_other_extensions";
+}
+
 // state.server is the active entry of state.servers (null when there is none)
 export async function getState() {
   const s = { ...DEFAULTS, ...(await chrome.storage.local.get(DEFAULTS)) };

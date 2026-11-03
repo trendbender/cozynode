@@ -1,4 +1,4 @@
-import { buildProxyConfig, getState, serverFor } from "./lib.js";
+import { buildProxyConfig, getState, proxyConflict, serverFor } from "./lib.js";
 
 // Proxy auth: answer only challenges from our own proxies, and give up after
 // two attempts per request so a wrong password cannot loop forever.
@@ -44,6 +44,7 @@ async function apply() {
     await chrome.proxy.settings.set({ value: buildProxyConfig(state), scope: "regular" });
     // keep WebRTC from leaking the real IP while the proxy is on
     await chrome.privacy.network.webRTCIPHandlingPolicy.set({ value: "disable_non_proxied_udp" });
+    if (await proxyConflict()) await chrome.storage.local.set({ lastError: chrome.i18n.getMessage("errConflict") });
   } else {
     await chrome.proxy.settings.clear({ scope: "regular" });
     await chrome.privacy.network.webRTCIPHandlingPolicy.clear({});

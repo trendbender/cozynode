@@ -64,7 +64,7 @@
     "message": "This does not look like cozy:// links or CozyNode settings."
   },
   "errAuth": {
-    "message": "The server rejected the login. Paste a fresh link."
+    "message": "The server rejected the login or password. Paste a fresh link from the server: sudo cozynode link"
   },
   "forget": {
     "message": "Remove server"
@@ -124,5 +124,14 @@
   },
   "errDecrypt": {
     "message": "Wrong password, or the text is damaged."
+  },
+  "errConflict": {
+    "message": "Another extension controls Chrome's proxy settings (a second CozyNode, FoxyProxy or similar). Turn it off in chrome://extensions."
+  },
+  "feedback": {
+    "message": "Suggest an improvement or report a bug"
+  },
+  "feedbackUrl": {
+    "message": "https://4queries.com/tools/cozynode/?utm_source=cozynode-extension&utm_medium=popup#feedback"
   }
 }

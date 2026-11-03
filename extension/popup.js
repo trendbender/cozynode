@@ -1,4 +1,4 @@
-import { CHECK_URL, DIRECT, addServer, decryptText, encryptText, exportSettings, getState, importSettings, isEncrypted, normalizeSite, parseLink, parseSettings, removeServer, serverId } from "./lib.js";
+import { CHECK_URL, DIRECT, addServer, decryptText, encryptText, exportSettings, getState, importSettings, isEncrypted, normalizeSite, parseLink, parseSettings, proxyConflict, removeServer, serverId } from "./lib.js";
 
 const $ = (id) => document.getElementById(id);
 const t = (key, sub) => chrome.i18n.getMessage(key, sub) || key;
@@ -93,6 +93,11 @@ async function saveRoute(site, id) {
 
 async function check() {
   const where = $("where");
+  if (await proxyConflict()) {
+    where.textContent = "";
+    await chrome.storage.local.set({ lastError: t("errConflict") });
+    return render();
+  }
   where.textContent = t("checking");
   try {
     const r = await fetch(CHECK_URL, { cache: "no-store" });
@@ -103,7 +108,10 @@ async function check() {
     await chrome.storage.local.set({ lastError: "" });
   } catch {
     where.textContent = "";
-    await chrome.storage.local.set({ lastError: t("errNetwork") });
+    // A rejected login fails the same fetch: keep the background's auth error, it says more.
+    await new Promise((r) => setTimeout(r, 300));
+    const { lastError } = await getState();
+    if (lastError !== t("errAuth")) await chrome.storage.local.set({ lastError: t("errNetwork") });
   }
   render();
 }

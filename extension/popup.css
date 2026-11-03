@@ -152,6 +152,8 @@ button { font: inherit; cursor: pointer; }
 #addForm { display: flex; gap: 6px; }
 footer { display: flex; justify-content: space-between; gap: 8px; margin-top: 12px; }
 #exported { margin: 6px 0 0; }
+.feedback { margin: 12px 0 0; padding-top: 8px; border-top: 1px solid var(--line); text-align: center; }
+.feedback a { color: var(--muted); }
 #exportBox { display: flex; gap: 6px; margin-top: 8px; }
 #exportBox[hidden] { display: none; }
 #importPass { margin-top: 6px; }

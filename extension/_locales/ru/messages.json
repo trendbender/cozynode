@@ -64,7 +64,7 @@
     "message": "Это не похоже на ссылки cozy:// или настройки CozyNode."
   },
   "errAuth": {
-    "message": "Сервер не принял логин. Вставьте свежую ссылку."
+    "message": "Сервер не принял логин или пароль. Вставьте свежую ссылку с сервера: sudo cozynode link"
   },
   "forget": {
     "message": "Удалить сервер"
@@ -124,5 +124,14 @@
   },
   "errDecrypt": {
     "message": "Неверный пароль или текст повреждён."
+  },
+  "errConflict": {
+    "message": "Прокси Chrome сейчас управляет другое расширение (вторая копия CozyNode, FoxyProxy и т. п.). Отключите его в chrome://extensions."
+  },
+  "feedback": {
+    "message": "Предложить улучшение или сообщить об ошибке"
+  },
+  "feedbackUrl": {
+    "message": "https://4queries.com/tools/cozynode/?utm_source=cozynode-extension&utm_medium=popup#feedback"
   }
 }
